@@ -1,9 +1,9 @@
 
-
+import { useContext } from 'react';
 import { GoogleLogin } from 'react-google-login';
 import { Dialog,withStyles,Box,Typography, makeStyles, ListItem, List } from '@material-ui/core';
-
-
+import { AccountContext } from '../../context/AccountProvider';
+import { clientId } from '../../constant/Data';
 
 const useStyles=makeStyles({
     component:{
@@ -43,17 +43,21 @@ const style ={
         boxShadow:'none',
         borderRadius:'none',
         maxHeight:'100%',
-        maxWidth:'100%'
+        maxWidth:'100%',
+        Overflow:'hidden'
     }
 }
 
 const Login = ({classes}) => {
     const classname = useStyles();
     const url= 'https://www.ginifab.com/feeds/qr_code/img/qrcode.jpg';
-    const clientId='618920243694-purngb286mbb46r5k2avuot30a0aa8tu.apps.googleusercontent.com';
+    
 
-    const onLoginSuccess = () =>{
-        console.log('login Successfull');
+    const {account, setAccount} = useContext(AccountContext);
+
+    const onLoginSuccess = (res) =>{
+        console.log('login Successfull',res.profileObj);
+        setAccount(res.profileObj);
     }
     const onLoginFailure = () => {
         console.log('login failure');
@@ -74,8 +78,9 @@ const Login = ({classes}) => {
                         <ListItem>3. Point your phone to this screen to capture the code</ListItem>
                     </List>
                </Box>
-               <Box>
+               <Box style={{position:'relative'}}>
                     <img src={url} alt='qr'  className={classname.qrCode}/>
+                    <Box style={{position:'absolute',left:'50%', top:'50%'}}>
                     <GoogleLogin
                     cookiePolicy={'single_host_origin'}
                     buttonText=""
@@ -83,6 +88,7 @@ const Login = ({classes}) => {
                     onSuccess={onLoginSuccess}
                     onFailure={onLoginFailure}
                     clientId={clientId}/>
+                    </Box>
                </Box>
            </Box>
         </Dialog>
